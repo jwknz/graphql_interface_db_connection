@@ -32,21 +32,21 @@ const startServer = async () => {
         })
     );
     
-    // const server = new ApolloServer({ 
-    //     typeDefs, 
-    //     resolvers 
-    // })
+    const server = new ApolloServer({ 
+        typeDefs, 
+        resolvers 
+    })
     
-    const server = new ApolloServer({
-        schema: applyMiddleware(
-            makeExecutableSchema({ typeDefs, resolvers }),
-            permissions
-        ),
-        context: ({ req }) => {
-            const user = req.user || null;
-            return { user };
-        }
-    });
+    // const server = new ApolloServer({
+    //     schema: applyMiddleware(
+    //         makeExecutableSchema({ typeDefs, resolvers }),
+    //         permissions
+    //     ),
+    //     context: ({ req }) => {
+    //         const user = req.user || null;
+    //         return { user };
+    //     }
+    // });
     
     server.applyMiddleware({ app });
     

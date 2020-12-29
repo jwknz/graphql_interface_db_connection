@@ -1,10 +1,12 @@
-# GraphQL Interface with MongoDB
+# GraphQL Interface with MariaDB
 
-Setup a MongoDB Container
+Setup a MariaDB Container
 
 ```
-docker run --name mongo_test \
--v ${PWD}/mdata:/data/db \
--p 27017:27017 \
--d mongo:4.4.2-bionic
+docker run --name maria_gql \
+-e MYSQL_ROOT_PASSWORD="YOUR_SECURE_PASSWORD" \
+-p="3306:3306" \
+-d mariadb:10.5.8-focal
 ```
+
+The port is opened, so you can check the data with a mysql editor, but is not required.

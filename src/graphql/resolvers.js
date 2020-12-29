@@ -43,15 +43,22 @@ export const resolvers = {
             return flat
 
         },
-        group: (_, { id }) => {
+        group: async (_, { id }) => {
             
-            return mongoose.modelNames().map(async mn => {
+            let types = mongoose.modelNames()
 
-                if (await mongoose.model(mn).exists({"_id": ObjectID(id)})) {
-                    return mongoose.model(mn).findOne({"_id": ObjectID(id)})
-                } 
+            let total = []
 
-            })
+            for(let t of types) {
+                let temp = await mongoose.model(t).find()
+                total.push(temp)
+            }
+
+            let flat = total.flat()
+
+            let filter = flat.filter(fl => fl.id == id)
+
+            return filter
 
         },
         families: () => Family.find(),

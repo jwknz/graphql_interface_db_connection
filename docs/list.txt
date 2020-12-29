@@ -1,0 +1,16 @@
+AIM: 
+To build a graphql api that can be used in multiple project
+Only the models, typedefs, queries, mutations and ENV need to be setup.
+
+Set up express server
+Connect to mongodb
+Models and typedefs
+Setup graphql api
+Basic Queries and Mutations
+Unions and Interfaces
+jwt for security
+Auth0 api for login
+Permissions
+
+ENV File so that the api can be generic
+Models can obviously not be part of the template - but they would be the only things to create

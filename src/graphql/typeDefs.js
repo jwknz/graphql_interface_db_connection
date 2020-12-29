@@ -25,6 +25,7 @@ export const typeDefs = gql`
         groups: [Group]
         group(id: String): [Group]
         families: [Family]
+        family(id: ID!): Family
         members: [Member]
     }
 

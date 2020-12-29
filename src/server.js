@@ -3,22 +3,20 @@ import { ApolloServer, makeExecutableSchema } from "apollo-server-express";
 import { applyMiddleware } from "graphql-middleware";
 import express from "express";
 import expressJwt from "express-jwt";
-import mongoose from 'mongoose';
 
 require('dotenv').config()
 
 const port = 4000;
 const app = express();
 
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient()
+
 // import {permissions} from "./graphql/permissions";
 import {resolvers} from "./graphql/resolvers";
 import {typeDefs} from "./graphql/typeDefs";
 
 const startServer = async () => {
-
-    await mongoose.connect(`mongodb://${process.env.MONGO_URL}`, {
-        useNewUrlParser: true, useUnifiedTopology: true
-    });
     
     app.get('/', (req, res) => {
         res.send('Welcome to the graphql api. Please read the docs.')
@@ -35,7 +33,10 @@ const startServer = async () => {
     const server = new ApolloServer({ 
         typeDefs, 
         resolvers,
-        playground: true
+        playground: true,
+        context: {
+            prisma,
+        }
     })
         
     server.applyMiddleware({ app, path: "/graphql" });

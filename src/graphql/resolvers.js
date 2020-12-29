@@ -1,6 +1,4 @@
-import { Family, Member } from "../mongo/models";
-import { ObjectID } from 'mongodb'
-import mongoose from 'mongoose'
+import { uuid } from 'uuidv4';
 
 export const resolvers = {
 
@@ -27,14 +25,33 @@ export const resolvers = {
 
     Query: {
         hello: (_, { name }) => `Hello ${name || 'World'}`,
-        groups: async () => {
+        
+        family: async (parent, args, context) => {
+            const { id } = args
+            return context.prisma.family.findUnique({
+              where: {
+                id,
+              }
+            })
+          },
 
-            let types = mongoose.modelNames()
+        families: async (parent, args, context) => {
+            return context.prisma.family.findMany();
+        },
+
+        members: async (parent, args, context) => {
+            return context.prisma.member.findMany();
+        },
+
+        groups: async (parent, args, context) => {
+
+            let keys = Object.keys(context.prisma._dmmf.modelMap)
 
             let total = []
 
-            for(let t of types) {
-                let temp = await mongoose.model(t).find()
+            for(let k in keys) {
+
+                let temp = await context.prisma[keys[k].toLowerCase()].findMany()
                 total.push(temp)
             }
 
@@ -43,34 +60,59 @@ export const resolvers = {
             return flat
 
         },
-        group: (_, { id }) => {
+
+        group: async (parent, args, context) => {
             
-            return mongoose.modelNames().map(async mn => {
+            let keys = Object.keys(context.prisma._dmmf.modelMap)
 
-                if (await mongoose.model(mn).exists({"_id": ObjectID(id)})) {
-                    return mongoose.model(mn).findOne({"_id": ObjectID(id)})
-                } 
+            let total = []
 
-            })
+            for(let k in keys) {
 
-        },
-        families: () => Family.find(),
-        members: () => Member.find(),
+                let temp = await context.prisma[keys[k].toLowerCase()].findMany()
+                total.push(temp)
+
+            }
+
+            let flat = total.flat()
+
+            let filtered = flat.filter(fl => fl.id == args.id)
+
+            return filtered
+
+        }
+
     },
 
     Mutation: {
 
-        createFamily: async (_, { familyName, numberOfPeople }) => {
-            const family = new Family({ name: familyName, numberOfPeople: numberOfPeople })
-            await family.save()
-            return family
-        },
+        createFamily: (parent, args, context, info) => {
 
-        createMember: async (_, { givenName, age }) => {
-            const member = new Member({ name: givenName, age: age })
-            await member.save()
-            return member
-        }
+            console.log(args)
+
+            const newFamily = context.prisma.family.create({
+              data: {
+                id: uuid(),
+                name: args.familyName,
+                numberOfPeople: args.numberOfPeople,
+              },
+            })
+            return newFamily
+          },
+
+          createMember: (parent, args, context, info) => {
+
+            console.log(args)
+
+            const newMember = context.prisma.member.create({
+              data: {
+                id: uuid(),
+                name: args.givenName,
+                age: args.age,
+              },
+            })
+            return newMember
+          }
 
     }
 

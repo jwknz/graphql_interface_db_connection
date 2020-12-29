@@ -34,21 +34,11 @@ const startServer = async () => {
     
     const server = new ApolloServer({ 
         typeDefs, 
-        resolvers 
+        resolvers,
+        playground: true
     })
-    
-    // const server = new ApolloServer({
-    //     schema: applyMiddleware(
-    //         makeExecutableSchema({ typeDefs, resolvers }),
-    //         permissions
-    //     ),
-    //     context: ({ req }) => {
-    //         const user = req.user || null;
-    //         return { user };
-    //     }
-    // });
-    
-    server.applyMiddleware({ app });
+        
+    server.applyMiddleware({ app, path: "/graphql" });
     
     app.listen({ port }, () => {
       console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`);

@@ -19,6 +19,7 @@
     "graphql-middleware": "^6.0.0",
     "graphql-shield": "^7.4.4",
     "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.6.3",
     "mongoose": "^5.11.8",
     "nodemon": "^2.0.6"
   }
